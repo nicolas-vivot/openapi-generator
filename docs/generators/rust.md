@@ -28,6 +28,7 @@ These options may be applied as additional-properties (cli) or configOptions (pl
 |preferUnsignedInt|Prefer unsigned integers where minimum value is &gt;= 0| |false|
 |supportAsync|If set, generate async function call instead. This option is for 'reqwest' library only| |true|
 |supportMiddleware|If set, add support for reqwest-middleware. This option is for 'reqwest' library only| |false|
+|supportGoogleCloudAuth|If set, add support for google-cloud-auth. Replaces other options such as BasicAuth, BearerToken or OAuth2_Implicit| |false|
 |supportMultipleResponses|If set, return type wraps an enum of all possible 2xx schemas. This option is for 'reqwest' library only| |false|
 |useSingleRequestParameter|Setting this property to true will generate functions with a single argument containing all API endpoint parameters instead of one argument per parameter.| |false|
 |withAWSV4Signature|whether to include AWS v4 signature support| |false|
