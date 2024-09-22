@@ -71,5 +71,9 @@ reqwest = { version = "^0.12", features = ["json", "multipart"] }
 {{#supportMiddleware}}
 reqwest-middleware = { version = "^0.3", features = ["json", "multipart"] }
 {{/supportMiddleware}}
+{{#reqwestGoogleCloudAuth}}
+google-cloud-auth = "0.17.0"
+google-cloud-token = "0.1.2"
+{{/supportGoogleCloudAuth}}
 {{/supportAsync}}
 {{/reqwest}}

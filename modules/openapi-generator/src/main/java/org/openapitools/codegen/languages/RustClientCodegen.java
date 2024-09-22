@@ -194,7 +194,7 @@ public class RustClientCodegen extends AbstractRustCodegen implements CodegenCon
                 .defaultValue(Boolean.TRUE.toString()));
         cliOptions.add(new CliOption(SUPPORT_MIDDLEWARE, "If set, add support for reqwest-middleware. This option is for 'reqwest' library only", SchemaTypeUtil.BOOLEAN_TYPE)
                 .defaultValue(Boolean.FALSE.toString()));
-        cliOptions.add(new CliOption(SUPPORT_GOOGLE_CLOUD_AUTH, "If set, add support for google-cloud-auth. Replaces other options such as BasicAuth, BearerToken or OAuth2_Implicit", SchemaTypeUtil.BOOLEAN_TYPE)
+        cliOptions.add(new CliOption(SUPPORT_GOOGLE_CLOUD_AUTH, "If set, add support for google-cloud-auth. This option is for 'reqwest' library only and requires the 'supportAsync' option", SchemaTypeUtil.BOOLEAN_TYPE)
                 .defaultValue(Boolean.FALSE.toString()));
         cliOptions.add(new CliOption(SUPPORT_MULTIPLE_RESPONSES, "If set, return type wraps an enum of all possible 2xx schemas. This option is for 'reqwest' library only", SchemaTypeUtil.BOOLEAN_TYPE)
                 .defaultValue(Boolean.FALSE.toString()));
