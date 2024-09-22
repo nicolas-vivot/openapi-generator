@@ -24,9 +24,9 @@ pub enum Error<T> {
     AWSV4SignatureError(aws_sigv4::http_request::Error),
     {{/withAWSV4Signature}}
     {{#supportAsync}}
-    {{#supportGoogleCloudAuth}}
+    {{#supportTokenSource}}
     TokenSource(Box<dyn std::error::Error + Send + Sync>),
-    {{#supportGoogleCloudAuth}}
+    {{#supportTokenSource}}
     {{/supportAsync}}
 }
 
@@ -44,9 +44,9 @@ impl <T> fmt::Display for Error<T> {
             Error::AWSV4SignatureError(e) => ("aws v4 signature", e.to_string()),
             {{/withAWSV4Signature}}
             {{#supportAsync}}
-            {{#supportGoogleCloudAuth}}
+            {{#supportTokenSource}}
             Error::TokenSource(e) => ("token source failure", e.to_string()),
-            {{#supportGoogleCloudAuth}}
+            {{#supportTokenSource}}
             {{/supportAsync}}
         };
         write!(f, "error in {}: {}", module, e)
@@ -67,9 +67,9 @@ impl <T: fmt::Debug> error::Error for Error<T> {
             Error::AWSV4SignatureError(_) => return None,
             {{/withAWSV4Signature}}
             {{#supportAsync}}
-            {{#supportGoogleCloudAuth}}
+            {{#supportTokenSource}}
             Error::TokenSource(e) => e,
-            {{#supportGoogleCloudAuth}}
+            {{#supportTokenSource}}
             {{/supportAsync}}
         })
     }

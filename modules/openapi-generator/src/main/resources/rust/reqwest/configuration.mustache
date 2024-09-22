@@ -1,17 +1,24 @@
 {{>partial_header}}
 
+{{!supportTokenSource}}
 {{#withAWSV4Signature}}
 use std::time::SystemTime;
 use aws_sigv4::http_request::{sign, SigningSettings, SigningParams, SignableRequest};
 use http;
 use secrecy::{SecretString, ExposeSecret};
 {{/withAWSV4Signature}}
+{{/supportTokenSource}}
+{{#supportTokenSource}}
+use google_cloud_token::NopeTokenSourceProvider;
+use google_cloud_token::TokenSourceProvider;
+{{/supportTokenSource}}
 
 #[derive(Debug, Clone)]
 pub struct Configuration {
     pub base_path: String,
     pub user_agent: Option<String>,
     pub client: {{#supportMiddleware}}reqwest_middleware::ClientWithMiddleware{{/supportMiddleware}}{{^supportMiddleware}}reqwest{{^supportAsync}}::blocking{{/supportAsync}}::Client{{/supportMiddleware}},
+    {{!supportTokenSource}}
     pub basic_auth: Option<BasicAuth>,
     pub oauth_access_token: Option<String>,
     pub bearer_access_token: Option<String>,
@@ -19,7 +26,10 @@ pub struct Configuration {
     {{#withAWSV4Signature}}
     pub aws_v4_key: Option<AWSv4Key>,
     {{/withAWSV4Signature}}
-    // TODO: take an oauth2 token source, similar to the go one
+    {{/supportTokenSource}}
+    {{#supportTokenSource}}
+    pub ts_provider: Box<dyn TokenSourceProvider>
+    {{/supportTokenSource}}
 }
 
 pub type BasicAuth = (String, Option<String>);
@@ -30,6 +40,7 @@ pub struct ApiKey {
     pub key: String,
 }
 
+{{!supportTokenSource}}
 {{#withAWSV4Signature}}
 #[derive(Debug, Clone)]
 pub struct AWSv4Key {
@@ -68,6 +79,8 @@ impl AWSv4Key {
     }
 }
 {{/withAWSV4Signature}}
+{{/supportTokenSource}}
+
 
 impl Configuration {
     pub fn new() -> Configuration {
@@ -81,11 +94,16 @@ impl Default for Configuration {
             base_path: "{{{basePath}}}".to_owned(),
             user_agent: {{#httpUserAgent}}Some("{{{.}}}".to_owned()){{/httpUserAgent}}{{^httpUserAgent}}Some("OpenAPI-Generator/{{{version}}}/rust".to_owned()){{/httpUserAgent}},
             client: {{#supportMiddleware}}reqwest_middleware::ClientBuilder::new(reqwest{{^supportAsync}}::blocking{{/supportAsync}}::Client::new()).build(){{/supportMiddleware}}{{^supportMiddleware}}reqwest{{^supportAsync}}::blocking{{/supportAsync}}::Client::new(){{/supportMiddleware}},
+            {{!supportTokenSource}}
             basic_auth: None,
             oauth_access_token: None,
             bearer_access_token: None,
             api_key: None,
 {{#withAWSV4Signature}}            aws_v4_key: None,{{/withAWSV4Signature}}
+            {{/supportTokenSource}}
+            {{#supportTokenSource}}
+            ts_provider: Box::new(NopeTokenSourceProvider {}),
+            {{/supportTokenSource}}
         }
     }
 }
