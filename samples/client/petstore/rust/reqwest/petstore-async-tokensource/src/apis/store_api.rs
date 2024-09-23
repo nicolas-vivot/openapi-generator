@@ -150,11 +150,11 @@ pub async fn get_inventory(configuration: &configuration::Configuration) -> Resu
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder = local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
     }
-    /// Obtain an authentication token from the provider.
-    /// Tokens can be IdToken, OAuth bearer token, Noop, etc depending on the provider type/configuration.
-    let token = local_var_configuration.ts_provider.token_source().token().await.map_err(Error::TokenSource)?;
-    /// Token source is responsible of the token type and value format (e.g adding prefix "Bearer" for bearer tokens, etc.)
-    local_var_req_builder = local_var_req_builder.header_sensitive(reqwest::header::AUTHORIZATION, token, true);
+    // Obtain a token from source provider.
+    // Tokens can be Id or access tokens depending on the provider type and configuration.
+    let token = local_var_configuration.token_source.token().await.map_err(Error::TokenSource)?;
+    // The token format is the responsibility of the provider, thus we just set the authorization header with whatever is given.
+    local_var_req_builder = local_var_req_builder.header(reqwest::header::AUTHORIZATION, token);
 
     let local_var_req = local_var_req_builder.build()?;
     let local_var_resp = local_var_client.execute(local_var_req).await?;

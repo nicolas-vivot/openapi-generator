@@ -37,7 +37,7 @@ impl <T: fmt::Debug> error::Error for Error<T> {
             Error::Serde(e) => e,
             Error::Io(e) => e,
             Error::ResponseError(_) => return None,
-            Error::TokenSource(e) => e,
+            Error::TokenSource(e) => &**e,
         })
     }
 }

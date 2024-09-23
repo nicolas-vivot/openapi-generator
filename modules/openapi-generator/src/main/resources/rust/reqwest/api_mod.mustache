@@ -68,7 +68,7 @@ impl <T: fmt::Debug> error::Error for Error<T> {
             {{/withAWSV4Signature}}
             {{#supportAsync}}
             {{#supportTokenSource}}
-            Error::TokenSource(e) => e,
+            Error::TokenSource(e) => &**e,
             {{/supportTokenSource}}
             {{/supportAsync}}
         })

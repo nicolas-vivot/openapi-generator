@@ -7,8 +7,9 @@ use http;
 use secrecy::{SecretString, ExposeSecret};
 {{/withAWSV4Signature}}
 {{#supportTokenSource}}
-use google_cloud_token::NopeTokenSourceProvider;
-use google_cloud_token::TokenSourceProvider;
+use std::sync::Arc;
+use google_cloud_token::TokenSource;
+use async_trait::async_trait;
 {{/supportTokenSource}}
 
 #[derive(Debug, Clone)]
@@ -27,7 +28,7 @@ pub struct Configuration {
     {{/withAWSV4Signature}}
     {{#supportAsync}}
     {{#supportTokenSource}}
-    pub ts_provider: Box<dyn TokenSourceProvider>
+    pub token_source: Arc<dyn TokenSource>,
     {{/supportTokenSource}}
     {{/supportAsync}}
 }
@@ -99,10 +100,24 @@ impl Default for Configuration {
             bearer_access_token: None,
             api_key: None,
             {{/supportTokenSource}}
-{{#withAWSV4Signature}}            aws_v4_key: None,{{/withAWSV4Signature}}
+            {{#withAWSV4Signature}}
+            aws_v4_key: None,
+            {{/withAWSV4Signature}}
             {{#supportTokenSource}}
-            ts_provider: Box::new(NopeTokenSourceProvider {}),
+            token_source: Arc::new(NoopTokenSource{}),
             {{/supportTokenSource}}
         }
     }
 }
+
+{{#supportTokenSource}}
+#[derive(Debug)]
+struct NoopTokenSource{}
+
+#[async_trait]
+impl TokenSource for NoopTokenSource {
+    async fn token(&self) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
+        panic!("This is dummy token source. You can use TokenSourceProvider from 'google_cloud_auth' crate, or any other compatible crate.")
+    }
+}
+{{/supportTokenSource}}
